@@ -86,55 +86,35 @@ def p_var_assign(t):
 def p_if_statement(t):
     '''
     if_statement : IF compare THEN NAME
-                 | IF compare THEN expression
     '''
     t[0] = ('==', t[2], t[4])
 
-def p_compare_num(t):
+def p_comp(t):
     '''
     compare : expression EQUALS expression
+            | expression NOTEQUALS expression
             | expression BIGGER expression
             | expression BIGGEROR expression
             | expression SMALLER expression
             | expression SMALLEROR expression
-            | expression NOTEQUALS expression
-            | NAME EQUALS NAME
     '''
     if t[2] == '==':
-        if t[1] == t[3]:
-            t[0] = True
-        else:
-            t[0] = False
-    
-    if t[2] == '<':
-        if t[1] < t[3]:
-            t[0] = True
-        else:
-            t[0] = False
+        t[0] = t[1] == t[3]
 
-    if t[2] == '<=':
-        if t[1] <= t[3]:
-            t[0] = True
-        else:
-            t[0] = False
+    elif t[2] == '!=':
+        t[0] = t[1] != t[3]
 
-    if t[2] == '>':
-        if t[1] > t[3]:
-            t[0] = True
-        else:
-            t[0] = False
+    elif t[2] == '>':
+        t[0] = t[1] > t[3]
 
-    if t[2] == '>=':
-        if t[1] >= t[3]:
-            t[0] = True
-        else:
-            t[0] = False
+    elif t[2] == '<':
+        t[0] = t[1] < t[3]
 
-    if t[2] == '!=':
-        if t[1] != t[3]:
-            t[0] = True
-        else:
-            t[0] = False
+    elif t[2] == '>=':
+        t[0] = t[1] >= t[3]
+
+    elif t[2] == '<=':
+        t[0] = t[1] <= t[3]
 
 def p_expression(t):
     '''
@@ -185,7 +165,11 @@ def run(t):
             return run(t[1]) * run(t[2])
 
         elif t[0] == '/':
-            return run(t[1]) / run(t[2])
+            try:
+                return run(t[1]) / run(t[2])
+            except ZeroDivisionError:
+                print("Cant divide by 0")
+                return 0
 
         elif t[0] == '=':
             variables[t[1]] = run(t[2])
