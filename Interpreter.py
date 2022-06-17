@@ -294,6 +294,8 @@ def AIMessage():
 
 parser = yacc.yacc()
 
+os.system('CLS')
+
 while True:
     try:
         s = AIMessage()
